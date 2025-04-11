@@ -23,7 +23,7 @@ sp_oauth = SpotifyOAuth(
     cache_handler=cache_handler,
     show_dialog=True
 )
-sp  = Spotify(auth_manager=sp_oauth)
+sp = Spotify(auth_manager=sp_oauth)
 
 @app.route('/')
 def home():
@@ -44,14 +44,16 @@ def get_playlists():
         return redirect(auth_url)
     
     playlists = sp.current_user_playlists()
-    playlist_info = [(pl['name'], pl['external_urls']['spotify']) for pl in playlist['items']]
-    playlist_html = '<br>'.join([f'{name}: {url}' for name, url in playlists_info])
+    playlists_info = [(pl['name'], pl['external_urls']['spotify']) for pl in playlists['items']]
+    playlists_html = '<br>'.join([f'{name}: {url}' for name, url in playlists_info])
+
+    return playlists_html
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
 
-    return playlists_display
+
 if __name__ == "__main__":
     app.run(debug=True)
