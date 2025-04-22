@@ -13,7 +13,7 @@
         <div class="row">
             {% for playlist in playlists %}
             <div class="col-md-4">
-                <div class="card" style="width: 18rem;">
+                <div class="card mb-4" style="width: 18rem;">
                     <img src="{{ playlist['cover_url'] }}" class="card-img-top" alt="{{ playlist['name'] }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ playlist['name'] }}</h5>
@@ -21,7 +21,7 @@
                         <a href="{{ playlist['url'] }}" class="btn btn-primary" target="_blank">Open in Spotify</a>
                     </div>
                 </div>
-            </div>
+            </div>            
             {% endfor %}
         </div>
     </div>
