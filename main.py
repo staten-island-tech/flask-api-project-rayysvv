@@ -1,3 +1,5 @@
+# Imports
+
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, session, url_for, render_template
@@ -8,10 +10,10 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(64)
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Retrieve the variables
+# Environment Variables
+
 client_id = os.getenv('CLIENT_ID')
 client_secret = os.getenv('CLIENT_SECRET')
 redirect_uri = os.getenv('REDIRECT_URI')
@@ -26,12 +28,12 @@ sp_oauth = SpotifyOAuth(
     cache_handler=cache_handler,
     show_dialog=True
 )
+
 sp = Spotify(auth_manager=sp_oauth)
 
 user_playlists = {}
 
 def validate_token():
-    """Helper function to validate the token."""
     if not sp_oauth.validate_token(cache_handler.get_cached_token()):
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
