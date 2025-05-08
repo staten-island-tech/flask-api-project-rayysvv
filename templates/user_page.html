@@ -8,7 +8,13 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="text-center">Welcome, {{ display_name }}</h1>
+        <div class="text-center">
+            <img src="{{ profile_picture or 'https://via.placeholder.com/150' }}" 
+                 alt="Profile Picture" 
+                 class="rounded-circle" 
+                 style="width: 150px; height: 150px;">
+            <h1 class="mt-3">Welcome, {{ display_name }}</h1>
+        </div>
         <h2>Your Playlists</h2>
         <div class="row">
             {% for playlist in playlists %}

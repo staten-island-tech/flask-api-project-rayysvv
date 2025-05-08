@@ -66,13 +66,18 @@ def user_page(user_id):
     if user_id not in user_playlists:
         return "User not found or no playlists available.", 404
 
-    # Retrieve the user's playlists and display name
+    # Retrieve the user's playlists, display name, and profile picture
     user_data = user_playlists[user_id]
     display_name = user_data['display_name']
+    profile_picture = user_data['profile_picture']
     playlists_info = user_data['playlists']
 
     # Render a template for the user's page
-    return render_template('user_page.html', user_id=user_id, display_name=display_name, playlists=playlists_info)
+    return render_template('user_page.html', 
+        user_id=user_id, 
+        display_name=display_name, 
+        profile_picture=profile_picture, 
+        playlists=playlists_info)
 
 # Get playlists route
 @app.route('/get_playlists')
@@ -86,6 +91,10 @@ def get_playlists():
         current_user = sp.current_user()
         user_id = current_user['id']
         display_name = current_user.get('display_name', 'Unknown User')  # Get the display name
+
+        # Get the profile picture URL
+        profile_images = current_user.get('images', [])
+        profile_picture = profile_images[0]['url'] if profile_images else None
 
         playlists = sp.current_user_playlists()
         playlists_info = []
@@ -105,9 +114,10 @@ def get_playlists():
                 'cover_url': cover_url
             })
 
-        # Store playlists and display name in the global dictionary
+        # Store playlists, display name, and profile picture in the global dictionary
         user_playlists[user_id] = {
             'display_name': display_name,
+            'profile_picture': profile_picture,
             'playlists': playlists_info
         }
 
@@ -121,6 +131,20 @@ def get_playlists():
 def logout():
     session.clear()
     return redirect(url_for('home'))
+
+@app.route('/account')
+def account():
+    # Fetch the current user's data from the global dictionary
+    user_id = session.get('user_id')
+    if not user_id or user_id not in user_playlists:
+        return redirect(url_for('home'))  # Redirect to home if user is not logged in
+
+    user_data = user_playlists[user_id]
+    display_name = user_data['display_name']
+    profile_picture = user_data['profile_picture']
+
+    # Render the account page
+    return render_template('account.html', display_name=display_name, profile_picture=profile_picture)
 
 # Run the Flask app
 if __name__ == "__main__":
