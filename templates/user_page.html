@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page - {{ display_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">Welcome, {{ display_name }}</h1>
+        <h2>Your Playlists</h2>
+        <div class="row">
+            {% for playlist in playlists %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ playlist['cover_url'] }}" class="card-img-top" alt="{{ playlist['name'] }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ playlist['name'] }}</h5>
+                        <a href="{{ playlist['url'] }}" class="btn btn-primary" target="_blank">Open in Spotify</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-4">Logout</a>
+    </div>
+</body>
+</html>
