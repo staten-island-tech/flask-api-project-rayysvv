@@ -134,16 +134,14 @@ def logout():
 
 @app.route('/account')
 def account():
-    # Fetch the current user's data from the global dictionary
     user_id = session.get('user_id')
     if not user_id or user_id not in user_playlists:
-        return redirect(url_for('home'))  # Redirect to home if user is not logged in
+        return redirect(url_for('home'))
 
     user_data = user_playlists[user_id]
     display_name = user_data['display_name']
     profile_picture = user_data['profile_picture']
 
-    # Render the account page
     return render_template('account.html', display_name=display_name, profile_picture=profile_picture)
 
 # Run the Flask app
