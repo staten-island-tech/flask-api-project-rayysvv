@@ -60,29 +60,34 @@ def callback():
     return redirect(url_for('get_playlists'))
 
 # User page route
+def get_sorted_playlists(playlists, sort_option):
+    """Helper function to sort playlists based on the sort option."""
+    if sort_option == 'z-a':
+        return sorted(playlists, key=lambda x: x['name'].lower(), reverse=True)
+    return sorted(playlists, key=lambda x: x['name'].lower())  # Default to 'a-z'
+
+
 @app.route('/user/<user_id>')
 def user_page(user_id):
-    print(f"User ID: {user_id}, Available User IDs: {list(user_playlists.keys())}")
     if user_id not in user_playlists:
         return render_template('user_not_found.html'), 404
 
     user_data = user_playlists[user_id]
-    display_name = user_data['display_name']
-    profile_picture = user_data['profile_picture']
-    playlists_info = user_data['playlists']
-
     sort_option = request.args.get('sort', 'a-z')
+    search_query = request.args.get('search', '').lower()  # Get the search query
 
-    if sort_option == 'a-z':
-        playlists_info = sorted(playlists_info, key=lambda x: x['name'].lower())
-    elif sort_option == 'z-a':
-        playlists_info = sorted(playlists_info, key=lambda x: x['name'].lower(), reverse=True)
+    # Get sorted playlists
+    playlists_info = get_sorted_playlists(user_data['playlists'], sort_option)
+
+    # Filter playlists based on the search query
+    if search_query:
+        playlists_info = [playlist for playlist in playlists_info if search_query in playlist['name'].lower()]
 
     return render_template(
         'user_page.html',
         user_id=user_id,
-        display_name=display_name,
-        profile_picture=profile_picture,
+        display_name=user_data['display_name'],
+        profile_picture=user_data['profile_picture'],
         playlists=playlists_info,
         sort_option=sort_option
     )

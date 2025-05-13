@@ -1,0 +1,28 @@
+
+.logout-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+.blinking-period {
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Style for playlist cover images */
+.card-img-top {
+    width: 100%; /* Make the image fill the card width */
+    aspect-ratio: 1 / 1; /* Ensure a square aspect ratio */
+    object-fit: cover; /* Crop the image to fit the square dimensions */
+    background-color: #f0f0f0; /* Optional: Add a fallback background color */
+}
