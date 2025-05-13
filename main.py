@@ -62,22 +62,30 @@ def callback():
 # User page route
 @app.route('/user/<user_id>')
 def user_page(user_id):
-    # Check if the user's playlists are already stored
+    print(f"User ID: {user_id}, Available User IDs: {list(user_playlists.keys())}")
     if user_id not in user_playlists:
-        return "User not found or no playlists available.", 404
+        return render_template('user_not_found.html'), 404
 
-    # Retrieve the user's playlists, display name, and profile picture
     user_data = user_playlists[user_id]
     display_name = user_data['display_name']
     profile_picture = user_data['profile_picture']
     playlists_info = user_data['playlists']
 
-    # Render a template for the user's page
-    return render_template('user_page.html', 
-        user_id=user_id, 
-        display_name=display_name, 
-        profile_picture=profile_picture, 
-        playlists=playlists_info)
+    sort_option = request.args.get('sort', 'a-z')
+
+    if sort_option == 'a-z':
+        playlists_info = sorted(playlists_info, key=lambda x: x['name'].lower())
+    elif sort_option == 'z-a':
+        playlists_info = sorted(playlists_info, key=lambda x: x['name'].lower(), reverse=True)
+
+    return render_template(
+        'user_page.html',
+        user_id=user_id,
+        display_name=display_name,
+        profile_picture=profile_picture,
+        playlists=playlists_info,
+        sort_option=sort_option
+    )
 
 # Get playlists route
 @app.route('/get_playlists')
@@ -114,6 +122,9 @@ def get_playlists():
                 'cover_url': cover_url
             })
 
+        # Sort playlists alphabetically by name (default A-Z)
+        playlists_info = sorted(playlists_info, key=lambda x: x['name'].lower())
+
         # Store playlists, display name, and profile picture in the global dictionary
         user_playlists[user_id] = {
             'display_name': display_name,
@@ -121,8 +132,8 @@ def get_playlists():
             'playlists': playlists_info
         }
 
-        # Redirect to the user's individual page
-        return redirect(url_for('user_page', user_id=user_id))
+        # Redirect to the user's individual page with default sorting (a-z)
+        return redirect(url_for('user_page', user_id=user_id, sort='a-z'))
     except ReadTimeout:
         return "The request to Spotify timed out. Please try again later.", 504
 
@@ -132,17 +143,10 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
-@app.route('/account')
-def account():
-    user_id = session.get('user_id')
-    if not user_id or user_id not in user_playlists:
-        return redirect(url_for('home'))
-
-    user_data = user_playlists[user_id]
-    display_name = user_data['display_name']
-    profile_picture = user_data['profile_picture']
-
-    return render_template('account.html', display_name=display_name, profile_picture=profile_picture)
+# Error handling
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 # Run the Flask app
 if __name__ == "__main__":
