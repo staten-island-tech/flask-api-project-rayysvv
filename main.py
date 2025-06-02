@@ -29,7 +29,7 @@ sp_oauth = SpotifyOAuth(
     scope=scope,
     cache_handler=cache_handler,
     show_dialog=True,
-    requests_timeout=10  # Increased timeout to handle slow API responses
+    requests_timeout=10
 )
 
 # Spotify API client
@@ -61,12 +61,11 @@ def callback():
 
 # User page route
 def get_sorted_playlists(playlists, sort_option):
-    """Helper function to sort playlists based on the sort option."""
     if sort_option == 'z-a':
         return sorted(playlists, key=lambda x: x['name'].lower(), reverse=True)
     return sorted(playlists, key=lambda x: x['name'].lower())  # Default to 'a-z'
 
-
+# User Display Page
 @app.route('/user/<user_id>')
 def user_page(user_id):
     if user_id not in user_playlists:
@@ -74,7 +73,7 @@ def user_page(user_id):
 
     user_data = user_playlists[user_id]
     sort_option = request.args.get('sort', 'a-z')
-    search_query = request.args.get('search', '').lower()  # Get the search query
+    search_query = request.args.get('search', '').lower()
 
     # Get sorted playlists
     playlists_info = get_sorted_playlists(user_data['playlists'], sort_option)
